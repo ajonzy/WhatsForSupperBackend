@@ -16,7 +16,10 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://" + os.environ.get("DATABASE_URL").partition("://")[2]
+_db_url = os.environ.get("DATABASE_URL") or os.environ.get("HEROKU_DATABASE_URL")
+if not _db_url:
+    raise RuntimeError("DATABASE_URL or HEROKU_DATABASE_URL must be set")
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://" + _db_url.partition("://")[2]
 socketio = SocketIO(app, cors_allowed_origins="*")
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
