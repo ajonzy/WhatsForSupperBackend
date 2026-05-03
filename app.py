@@ -2750,5 +2750,9 @@ def delete_shoppingingredient(id):
         "data": shoppingingredient_schema.dump(record)
     })
 
+# Ensure tables exist (empty Railway Postgres has no schema until Heroku restore or first boot).
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
     socketio.run(app, debug=True)
